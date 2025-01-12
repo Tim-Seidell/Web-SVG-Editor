@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple SVG</title>
+    <style>
+        html, body {
+            background-color: lightgray;
+            /* margin: 0;
+            height: 100%;
+            overflow: hidden */
+        }
+
+        .svgcanvas {
+            /* display: inline-block; */
+        }
+
+        .elementcard {
+            /* display: inline-block; */
+        }
+
+        form * {
+            display: inline;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div style="display: inline">
+        <svg id="svg_canvas" class="svgcanvas" width="20cm" height="20cm" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg" version="1.1" style="background-color:white">
+            <!-- <rect x="1" y="1" width="798" height="798" fill="none" stroke="blue" stroke-width="2"/> -->
+        </svg>
+    </div>
+
+    <div id="element_list" style="display: float">
+
+    </div>
+
+    <form onsubmit="download(this['name'].value, document.getElementById('svg_canvas').outerHTML)">
+        <input type="text" name="name" value="test.svg">
+        <input type="submit" value="Download">
+    </form>
+</body>
+<script>
+    var svgElements = [];
+    var elementList = document.getElementById("element_list");
+    // setAttributes(circle, {"cx":"200", "cy":"200", "r":"100", "fill":"red", "stroke":"blue", "stroke-width":"10"});
+    // function setAttributes(el, attrs) {
+    //     for(var key in attrs) {
+    //         el.setAttribute(key, attrs[key]);
+    //     }
+    // }
+
+    function download(filename, text) {
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
+    }
+
+    function updateElementList(element, elementName) {
+        svgElements.push(element);
+
+        elementList.innerHTML = "";
+        for(svg in svgElements) {
+            var svgElement = document.createElement("div");
+            svgElement.innerText = elementName;
+            svgElement.className = "elementcard";
+            elementList.appendChild(svgElement);
+        }        
+    }
+
+
+    function createSVGElement(elementType, attributes) {
+        var canvas = document.getElementById("svg_canvas");
+
+        var newElement = document.createElementNS("http://www.w3.org/2000/svg", elementType); //Create a path in SVG's namespace
+
+        for(var key in attributes) {
+            newElement.setAttribute(key, attributes[key]);
+        }
+
+        // newElement.style.stroke = "#000"; //Set stroke colour
+
+        canvas.appendChild(newElement);
+        updateElementList(newElement, elementType);
+    }
+
+    document.addEventListener('keydown', (event) => {
+        switch (event.key) {
+            case 'c':
+                const attributes = {
+                    "cx":"400",
+                    "cy":"400",
+                    "r":"100",
+                    "fill":"black",
+                    "stroke":"blue",
+                    "stroke-width":"0"
+                };
+
+                createSVGElement("circle", attributes);
+                break;
+            case 'Mangoes':
+                break;
+            case 'Papayas':
+                console.log('Mangoes and papayas are $2.79 a pound.');
+                break;
+            default:
+                console.log("\"" + event.key + "\" is not a valid input.");
+                break;
+        }
+    });
+</script>
+</html>
